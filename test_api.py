@@ -7,17 +7,40 @@
 # @Email   : sml2h3@gmail.com
 # @File    : test_api.py
 # @Software: PyCharm
+import base64
+
 import requests
 
+print(' ')
 # ******************OCR识别部分开始******************
+# host = "http://127.0.0.1:9898"
 # 目标检测就把ocr改成det,其他相同
-api_url = "http://10.0.20.198:9898/ocr"
-
 # 方式一
-# file = open(r'test.jpg', 'rb').read()
-#
-# resp = requests.post(api_url, files={'image': file})
-# print(resp.text)
+file = open(r'test.jpg', 'rb').read()
+
+api_url = f"{host}/ocr/file"
+resp = requests.post(api_url, files={'image': file})
+print(f"{api_url=}, {resp.text=}")
+
+api_url = f"{host}/ocr/file/json"
+resp = requests.post(api_url, files={'image': file})
+print(f"{api_url=}, {resp.text=}")
+
+api_url = f"{host}/ocr/b64"
+resp = requests.post(api_url, data=base64.b64encode(file).decode())
+print(f"{api_url=}, {resp.text=}")
+
+api_url = f"{host}/ocr/b64/json"
+resp = requests.post(api_url, data=base64.b64encode(file).decode())
+print(f"{api_url=}, {resp.text=}")
+
+api_url = f"{host}/det/file"
+resp = requests.post(api_url, files={'image': file})
+print(f"{api_url=}, {resp.text=}")
+
+api_url = f"{host}/det/file/json"
+resp = requests.post(api_url, files={'image': file})
+print(f"{api_url=}, {resp.text=}")
 
 # 方式二
 

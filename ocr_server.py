@@ -1,5 +1,6 @@
 # encoding=utf-8
 import argparse
+import base64
 import json
 
 import ddddocr
@@ -39,7 +40,6 @@ class Server(object):
         else:
             print("目标检测模块未开启，如需要使用，请使用参数  --det开启")
 
-
     def classification(self, img: bytes):
         if self.ocr_option:
             return self.ocr.classification(img)
@@ -56,23 +56,42 @@ class Server(object):
 server = Server(ocr=args.ocr, det=args.det, old=args.old)
 
 
-@app.route('/ocr', methods=['POST'])
-def ocr():
-    try:
+def get_img(request, img_type='file'):
+    if img_type == 'b64':
+        img = base64.b64decode(request.stream.read().decode())
+    else:
         img = request.files.get('image').read()
-        r = server.classification(img)
-        return json.dumps({"status": "200", "result": str(r), "msg": ""})
-    except Exception as e:
-        return json.dumps({"status": "500", "result": "", "msg": str(e)})
+    return img
 
-@app.route('/det', methods=['POST'])
-def det():
+
+def set_ret(result, ret_type='text'):
+    if ret_type == 'json':
+        if isinstance(result, Exception):
+            return json.dumps({"status": 200, "result": "", "msg": str(result)})
+        else:
+            return json.dumps({"status": 200, "result": result, "msg": ""})
+        # return json.dumps({"succ": isinstance(result, str), "result": str(result)})
+    else:
+        if isinstance(result, Exception):
+            return ''
+        else:
+            return str(result).strip()
+
+
+@app.route('/<opt>/<img_type>', methods=['POST'])
+@app.route('/<opt>/<img_type>/<ret_type>', methods=['POST'])
+def ocr(opt, img_type='file', ret_type='text'):
     try:
-        img = request.files.get('image').read()
-        r = server.detection(img)
-        return json.dumps({"status": "200", "result": r, "msg": ""})
+        img = get_img(request, img_type)
+        if opt == 'ocr':
+            result = server.classification(img)
+        elif opt == 'det':
+            result = server.detection(img)
+        else:
+            raise f"<opt={opt}> is invalid"
+        return set_ret(result, ret_type)
     except Exception as e:
-        return json.dumps({"status": "500", "result": "", "msg": str(e)})
+        return set_ret(e, ret_type)
 
 
 @app.route('/ping', methods=['GET'])

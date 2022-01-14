@@ -23,7 +23,7 @@ pip install -r requirements.txt -i https://pypi.douban.com/simple
 python ocr_server.py --port 9898 --ocr
 
 # 开启ocr模块并使用旧模型计算
-python ocr_server.py --port 9898 --ocr -old
+python ocr_server.py --port 9898 --ocr --old
 
 # 只开启目标检测模块
 python ocr_server.py --port 9898  --det
@@ -61,12 +61,21 @@ docker run -p 9898:9898 -d ocr_server:v1
 ```python
 # 1、测试是否启动成功，可以通过直接GET访问http://{host}:{port}/ping来测试，如果返回pong则启动成功
 
-# 2、OCR请求
+# 2、OCR/目标检测请求接口格式：
 
+# http://{host}:{port}/{opt}/{img_type}/{ret_type}
+# opt：操作类型 ocr=OCR det=目标检测
+# img_type: 数据类型 file=文件上传方式 b64=base64(imgbyte)方式 默认为file方式
+# ret_type: 返回类型 json=返回json（识别出错会在msg里返回错误信息） text=返回文本格式（识别出错时回直接返回空文本）
+
+# 例子：
+
+# OCR请求
 # resp = requests.post("http://{host}:{port}/ocr", files={'image': image_bytes})
+# resp = requests.post("http://{host}:{port}/ocr/b64/text", data=base64.b64encode(file).decode())
 
-# 3、目标检测请求
-
+# 目标检测请求
 # resp = requests.post("http://{host}:{port}/det", files={'image': image_bytes})
+# resp = requests.post("http://{host}:{port}/ocr/b64/json", data=base64.b64encode(file).decode())
 
 ```
