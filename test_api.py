@@ -17,6 +17,8 @@ print(' ')
 # 目标检测就把ocr改成det,其他相同
 # 方式一
 file = open(r'test.jpg', 'rb').read()
+# file = open(r'test_calc.png', 'rb').read()
+
 
 api_url = f"{host}/ocr/file"
 resp = requests.post(api_url, files={'image': file})
