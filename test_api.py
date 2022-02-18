@@ -8,12 +8,12 @@
 # @File    : test_api.py
 # @Software: PyCharm
 import base64
-
+import json
 import requests
 
 print(' ')
 # ******************OCR识别部分开始******************
-# host = "http://127.0.0.1:9898"
+host = "http://127.0.0.1:9898"
 # 目标检测就把ocr改成det,其他相同
 # 方式一
 file = open(r'test.jpg', 'rb').read()
@@ -42,6 +42,52 @@ print(f"{api_url=}, {resp.text=}")
 
 api_url = f"{host}/det/file/json"
 resp = requests.post(api_url, files={'image': file})
+print(f"{api_url=}, {resp.text=}")
+
+# 滑块识别
+
+target_file = open(r'match_target.png', 'rb').read()
+bg_file = open(r'match_bg.png', 'rb').read()
+
+api_url = f"{host}/slide/match/file"
+resp = requests.post(api_url, files={'target_img': target_file, 'bg_img': bg_file})
+print(f"{api_url=}, {resp.text=}")
+
+api_url = f"{host}/slide/match/file/json"
+resp = requests.post(api_url, files={'target_img': target_file, 'bg_img': bg_file})
+print(f"{api_url=}, {resp.text=}")
+
+api_url = f"{host}/slide/match/b64"
+target_b64str = base64.b64encode(target_file).decode()
+bg_b64str = base64.b64encode(bg_file).decode()
+jsonstr = json.dumps({'target_img': target_b64str, 'bg_img': bg_b64str})
+resp = requests.post(api_url, data=base64.b64encode(jsonstr.encode()).decode())
+print(f"{api_url=}, {resp.text=}")
+
+api_url = f"{host}/slide/match/b64/json"
+resp = requests.post(api_url, data=base64.b64encode(jsonstr.encode()).decode())
+print(f"{api_url=}, {resp.text=}")
+
+target_file = open(r'compare_target.jpg', 'rb').read()
+bg_file = open(r'compare_bg.jpg', 'rb').read()
+
+api_url = f"{host}/slide/compare/file"
+resp = requests.post(api_url, files={'target_img': target_file, 'bg_img': bg_file})
+print(f"{api_url=}, {resp.text=}")
+
+api_url = f"{host}/slide/compare/file/json"
+resp = requests.post(api_url, files={'target_img': target_file, 'bg_img': bg_file})
+print(f"{api_url=}, {resp.text=}")
+
+api_url = f"{host}/slide/compare/b64"
+target_b64str = base64.b64encode(target_file).decode()
+bg_b64str = base64.b64encode(bg_file).decode()
+jsonstr = json.dumps({'target_img': target_b64str, 'bg_img': bg_b64str})
+resp = requests.post(api_url, data=base64.b64encode(jsonstr.encode()).decode())
+print(f"{api_url=}, {resp.text=}")
+
+api_url = f"{host}/slide/compare/b64/json"
+resp = requests.post(api_url, data=base64.b64encode(jsonstr.encode()).decode())
 print(f"{api_url=}, {resp.text=}")
 
 # 方式二

@@ -52,15 +52,28 @@ class Server(object):
         else:
             raise Exception("目标检测模块模块未开启")
 
+    def slide(self, target_img: bytes, bg_img: bytes, algo_type: str):
+        dddd = self.ocr or self.det or ddddocr.DdddOcr(ocr=False)
+        if algo_type == 'match':
+            return dddd.slide_match(target_img, bg_img)
+        elif algo_type == 'compare':
+            return dddd.slide_comparison(target_img, bg_img)
+        else:
+            raise Exception(f"不支持的滑块算法类型: {algo_type}")
 
 server = Server(ocr=args.ocr, det=args.det, old=args.old)
 
 
-def get_img(request, img_type='file'):
+def get_img(request, img_type='file', img_name='image'):
     if img_type == 'b64':
-        img = base64.b64decode(request.stream.read().decode())
+        img = base64.b64decode(request.get_data()) # 
+        try: # json str of multiple images
+            dic = json.loads(img)
+            img = base64.b64decode(dic.get(img_name).encode())
+        except Exception as e: # just base64 of single image
+            pass
     else:
-        img = request.files.get('image').read()
+        img = request.files.get(img_name).read()
     return img
 
 
@@ -93,6 +106,16 @@ def ocr(opt, img_type='file', ret_type='text'):
     except Exception as e:
         return set_ret(e, ret_type)
 
+@app.route('/slide/<algo_type>/<img_type>', methods=['POST'])
+@app.route('/slide/<algo_type>/<img_type>/<ret_type>', methods=['POST'])
+def slide(algo_type='compare', img_type='file', ret_type='text'):
+    try:
+        target_img = get_img(request, img_type, 'target_img')
+        bg_img = get_img(request, img_type, 'bg_img')
+        result = server.slide(target_img, bg_img, algo_type)
+        return set_ret(result, ret_type)
+    except Exception as e:
+        return set_ret(e, ret_type)
 
 @app.route('/ping', methods=['GET'])
 def ping():

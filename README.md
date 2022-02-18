@@ -64,7 +64,7 @@ docker run -p 9898:9898 -d ocr_server:v1
 # 2、OCR/目标检测请求接口格式：
 
 # http://{host}:{port}/{opt}/{img_type}/{ret_type}
-# opt：操作类型 ocr=OCR det=目标检测
+# opt：操作类型 ocr=OCR det=目标检测 slide=滑块（match和compare两种算法，默认为compare)
 # img_type: 数据类型 file=文件上传方式 b64=base64(imgbyte)方式 默认为file方式
 # ret_type: 返回类型 json=返回json（识别出错会在msg里返回错误信息） text=返回文本格式（识别出错时回直接返回空文本）
 
@@ -78,4 +78,8 @@ docker run -p 9898:9898 -d ocr_server:v1
 # resp = requests.post("http://{host}:{port}/det", files={'image': image_bytes})
 # resp = requests.post("http://{host}:{port}/ocr/b64/json", data=base64.b64encode(file).decode())
 
+# 滑块识别请求
+# resp = requests.post("http://{host}:{port}/slide/match/", files={'target_img': target_bytes, 'bg_img': bg_bytes})
+# jsonstr = json.dumps({'target_img': target_b64str, 'bg_img': bg_b64str})
+# resp = requests.post("http://{host}:{port}/slide/compare/b64", files=base64.b64encode(jsonstr.encode()).decode())
 ```
