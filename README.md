@@ -71,15 +71,15 @@ docker run -p 9898:9898 -d ocr_server:v1
 # 例子：
 
 # OCR请求
-# resp = requests.post("http://{host}:{port}/ocr", files={'image': image_bytes})
+# resp = requests.post("http://{host}:{port}/ocr/file", files={'image': image_bytes})
 # resp = requests.post("http://{host}:{port}/ocr/b64/text", data=base64.b64encode(file).decode())
 
 # 目标检测请求
-# resp = requests.post("http://{host}:{port}/det", files={'image': image_bytes})
+# resp = requests.post("http://{host}:{port}/det/file", files={'image': image_bytes})
 # resp = requests.post("http://{host}:{port}/ocr/b64/json", data=base64.b64encode(file).decode())
 
 # 滑块识别请求
-# resp = requests.post("http://{host}:{port}/slide/match/", files={'target_img': target_bytes, 'bg_img': bg_bytes})
+# resp = requests.post("http://{host}:{port}/slide/match/file", files={'target_img': target_bytes, 'bg_img': bg_bytes})
 # jsonstr = json.dumps({'target_img': target_b64str, 'bg_img': bg_b64str})
 # resp = requests.post("http://{host}:{port}/slide/compare/b64", files=base64.b64encode(jsonstr.encode()).decode())
 ```
