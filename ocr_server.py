@@ -5,6 +5,10 @@ import json
 
 import ddddocr
 from flask import Flask, request
+from flask_cors import CORS
+
+app = Flask(__name__)
+CORS(app, origins=["http://example.com"])
 
 parser = argparse.ArgumentParser(description="使用ddddocr搭建的最简api服务")
 parser.add_argument("-p", "--port", type=int, default=9898)
