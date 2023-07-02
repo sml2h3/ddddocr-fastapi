@@ -11,7 +11,7 @@ WORKDIR /app
 COPY . /app
 
 # 安装Python依赖
-RUN pip3 install --no-cache-dir ddddocr flask 
+RUN pip3 install --no-cache-dir requirements.txt
 
 
 # 定义容器启动时要运行的命令
