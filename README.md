@@ -1,7 +1,7 @@
 # ocr_api_server
 使用ddddocr的最简api搭建项目，支持docker
 
-**建议python版本3.7-3.9 64位**
+**建议python版本3.7-3.10 64位**
 
 再有不好好看文档的我就不管了啊！！！
 
@@ -39,8 +39,11 @@ python ocr_server.py --port 9898 --ocr --old --det
 ## docker运行方式(目测只能在Linux下部署)
 
 ```shell
+# clone repo
 git clone https://github.com/sml2h3/ocr_api_server.git
-# docker怎么安装？百度吧
+
+# install docker
+curl -Lso- https://get.docker.com | bash
 
 cd ocr_api_server
 
@@ -82,4 +85,27 @@ docker run -p 9898:9898 -d ocr_server:v1
 # resp = requests.post("http://{host}:{port}/slide/match/file", files={'target_img': target_bytes, 'bg_img': bg_bytes})
 # jsonstr = json.dumps({'target_img': target_b64str, 'bg_img': bg_b64str})
 # resp = requests.post("http://{host}:{port}/slide/compare/b64", files=base64.b64encode(jsonstr.encode()).decode())
+```
+
+# 测试
+
+请确保已经安装好`requests`库
+然后执行项目内的`test_api.py`文件即可
+```shell
+$ python3 test_api.py
+ 
+api_url='http://127.0.0.1:9898/ocr/file', resp.text='9gnb'
+api_url='http://127.0.0.1:9898/ocr/file/json', resp.text='{"status": 200, "result": "9gnb", "msg": ""}'
+api_url='http://127.0.0.1:9898/ocr/b64', resp.text='9gnb'
+api_url='http://127.0.0.1:9898/ocr/b64/json', resp.text='{"status": 200, "result": "9gnb", "msg": ""}'
+api_url='http://127.0.0.1:9898/det/file', resp.text=''
+api_url='http://127.0.0.1:9898/det/file/json', resp.text='{"status": 200, "result": "", "msg": "\\u76ee\\u6807\\u68c0\\u6d4b\\u6a21\\u5757\\u6a21\\u5757\\u672a\\u5f00\\u542f"}'
+api_url='http://127.0.0.1:9898/slide/match/file', resp.text="{'target_y': 45, 'target': [215, 45, 260, 91]}"
+api_url='http://127.0.0.1:9898/slide/match/file/json', resp.text='{"status": 200, "result": {"target_y": 45, "target": [215, 45, 260, 91]}, "msg": ""}'
+api_url='http://127.0.0.1:9898/slide/match/b64', resp.text="{'target_y': 45, 'target': [215, 45, 260, 91]}"
+api_url='http://127.0.0.1:9898/slide/match/b64/json', resp.text='{"status": 200, "result": {"target_y": 45, "target": [215, 45, 260, 91]}, "msg": ""}'
+api_url='http://127.0.0.1:9898/slide/compare/file', resp.text="{'target': [144, 76]}"
+api_url='http://127.0.0.1:9898/slide/compare/file/json', resp.text='{"status": 200, "result": {"target": [144, 76]}, "msg": ""}'
+api_url='http://127.0.0.1:9898/slide/compare/b64', resp.text="{'target': [144, 76]}"
+api_url='http://127.0.0.1:9898/slide/compare/b64/json', resp.text='{"status": 200, "result": {"target": [144, 76]}, "msg": ""}'
 ```
