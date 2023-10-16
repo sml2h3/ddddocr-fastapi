@@ -53,7 +53,7 @@ cd ocr_api_server
 docker build -t ocr_server:v1 .
 
 # 运行镜像
-docker run -p 9898:9898 -d ocr_server:v1
+docker run -p 9898:9898 -d --name ocr ocr_server:v1
 
 ```
 
