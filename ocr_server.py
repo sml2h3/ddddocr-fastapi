@@ -4,7 +4,7 @@ import base64
 import json
 
 import ddddocr
-from flask import Flask, request
+from flask import Flask, request, Response
 
 parser = argparse.ArgumentParser(description="使用ddddocr搭建的最简api服务")
 parser.add_argument("-p", "--port", type=int, default=9898)
@@ -80,9 +80,9 @@ def get_img(request, img_type='file', img_name='image'):
 def set_ret(result, ret_type='text'):
     if ret_type == 'json':
         if isinstance(result, Exception):
-            return json.dumps({"status": 200, "result": "", "msg": str(result)})
+            return Response(json.dumps({"status": 200, "result": "", "msg": str(result)}), mimetype='application/json')
         else:
-            return json.dumps({"status": 200, "result": result, "msg": ""})
+            return Response(json.dumps({"status": 200, "result": result, "msg": ""}), mimetype='application/json')
         # return json.dumps({"succ": isinstance(result, str), "result": str(result)})
     else:
         if isinstance(result, Exception):
