@@ -30,7 +30,7 @@ class Server(object):
             print("ocr模块开启")
             if custom_onnx and charsets_path:
                 print(f"使用自定义ONNX模型: {custom_onnx} 和字符集: {charsets_path}")
-                self.ocr = ddddocr.DdddOcr(det=det, ocr=ocr, import_onnx_path=custom_onnx, charsets_path=charsets_path)
+                self.ocr = ddddocr.DdddOcr(det=False, ocr=False, import_onnx_path=custom_onnx, charsets_path=charsets_path)
             elif self.old_option:
                 print("使用OCR旧模型启动")
                 self.ocr = ddddocr.DdddOcr(old=True)
