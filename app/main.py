@@ -1,23 +1,30 @@
+import uvicorn
 from fastapi import FastAPI, File, UploadFile, HTTPException, Form
-from fastapi.responses import JSONResponse
 from typing import Optional, Union
 import base64
-from .models import OCRRequest, SlideMatchRequest, DetectionRequest, APIResponse
-from .services import ocr_service
+from app.models import OCRRequest, SlideMatchRequest, DetectionRequest, APIResponse
+from app.services import ocr_service
 
 app = FastAPI()
 
+from starlette.datastructures import UploadFile as StarletteUploadFile
 
-def decode_image(image: Union[UploadFile, str, None]) -> bytes:
-    if isinstance(image, UploadFile):
-        return image.file.read()
+
+async def decode_image(image: Union[UploadFile, StarletteUploadFile, str, None]) -> bytes:
+    if image is None:
+        raise HTTPException(status_code=400, detail="No image provided")
+
+    if isinstance(image, (UploadFile, StarletteUploadFile)):
+        return await image.read()
     elif isinstance(image, str):
         try:
+            # 检查是否是 base64 编码的图片
+            if image.startswith(('data:image/', 'data:application/')):
+                # 移除 MIME 类型前缀
+                image = image.split(',')[1]
             return base64.b64decode(image)
         except:
             raise HTTPException(status_code=400, detail="Invalid base64 string")
-    elif image is None:
-        raise HTTPException(status_code=400, detail="No image provided")
     else:
         raise HTTPException(status_code=400, detail="Invalid image input")
 
@@ -34,7 +41,7 @@ async def ocr_endpoint(
         if file is None and image is None:
             return APIResponse(code=400, message="Either file or image must be provided")
 
-        image_bytes = decode_image(file or image)
+        image_bytes = await decode_image(file or image)
         result = ocr_service.ocr_classification(image_bytes, probability, charsets, png_fix)
         return APIResponse(code=200, message="Success", data=result)
     except Exception as e:
@@ -53,8 +60,8 @@ async def slide_match_endpoint(
         if (target_file is None and target is None) or (background_file is None and background is None):
             return APIResponse(code=400, message="Both target and background must be provided")
 
-        target_bytes = decode_image(target_file or target)
-        background_bytes = decode_image(background_file or background)
+        target_bytes = await decode_image(target_file or target)
+        background_bytes = await decode_image(background_file or background)
         result = ocr_service.slide_match(target_bytes, background_bytes, simple_target)
         return APIResponse(code=200, message="Success", data=result)
     except Exception as e:
@@ -70,8 +77,12 @@ async def detection_endpoint(
         if file is None and image is None:
             return APIResponse(code=400, message="Either file or image must be provided")
 
-        image_bytes = decode_image(file or image)
+        image_bytes = await decode_image(file or image)
         bboxes = ocr_service.detection(image_bytes)
         return APIResponse(code=200, message="Success", data=bboxes)
     except Exception as e:
         return APIResponse(code=500, message=str(e))
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)

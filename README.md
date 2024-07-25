@@ -32,23 +32,39 @@
    cd ddddocr-api
    ```
 
-2. **构建 Docker 镜像 [一键docker环境服务器购买，可一元试用](https://app.rainyun.com/apps/rcs/buy) **
-   ```bash
-   docker build -t ddddocr-api .
-   ```
+2. **启动服务**
+   
+   有三种方式可以启动应用：
 
-3. **启动服务**
-   ```bash
-   docker run -d -p 8000:8000 --name ddddocr-api-container ddddocr-api
-   ```
+   a. 使用 docker启动：
+      1. 构建 Docker 镜像 [一键docker环境服务器购买，可一元试用](https://app.rainyun.com/apps/rcs/buy) 
+      2. 打包镜像
+          ```bash
+          docker build -t ddddocr-api .
+          ```
+      3. 启动镜像
+         ```bash
+         docker run -d -p 8000:8000 --name ddddocr-api-container ddddocr-api
+         ```
 
-4. **验证服务**
+   b. 使用 python 命令直接运行：
+      ```bash
+      python app/main.py
+      ```
+   
+   b. 使用 uvicorn（支持热重载，适合开发）：
+      ```bash
+      uvicorn app.main:app --reload
+      ```
+
+
+3. **验证服务**
    ```bash
    curl http://localhost:8000/docs
    ```
    > 如果成功，您将看到 Swagger UI 文档页面。
    
-5. **停止服务**
+4. **停止服务**
 
 - 如果使用 Docker：
   ```bash
@@ -60,7 +76,7 @@
   docker-compose down
   ```
   
-6. **查看日志**
+5. **查看日志**
 
 - 如果使用 Docker：
   ```bash
