@@ -37,7 +37,7 @@
    有三种方式可以启动应用：
 
    a. 使用 docker启动：
-      1. 构建 Docker 镜像 [一键docker环境服务器购买，可一元试用](https://app.rainyun.com/apps/rcs/buy) 
+      1. 构建 Docker 镜像 [一键docker环境服务器购买，可一元试用](https://www.rainyun.com/ddddocr_) 
       2. 打包镜像
           ```bash
           docker build -t ddddocr-api .
