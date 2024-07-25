@@ -1,17 +1,17 @@
-FROM python:3.8-slim-buster
+# 使用官方 Python 运行时作为父镜像
+FROM python:3.9-slim
 
-RUN mkdir /app
-
-COPY ./*.txt ./*.py ./*.sh ./*.onnx /app/
-
-
-RUN cd /app \
-    && python3 -m pip install --upgrade pip -i https://pypi.douban.com/simple/\
-    && pip3 install --no-cache-dir -r requirements.txt --extra-index-url https://pypi.douban.com/simple/ \
-    && rm -rf /tmp/* && rm -rf /root/.cache/* \
-    && sed -i 's#http://deb.debian.org#http://mirrors.aliyun.com/#g' /etc/apt/sources.list\
-    && apt-get --allow-releaseinfo-change update && apt install libgl1-mesa-glx libglib2.0-0 -y
-
+# 设置工作目录
 WORKDIR /app
 
-CMD ["python3", "ocr_server.py", "--port", "9898", "--ocr", "--det"]
+# 将当前目录内容复制到容器的 /app 中
+COPY . /app
+
+# 安装项目依赖
+RUN pip install --no-cache-dir -r requirements.txt
+
+# 暴露端口 8000
+EXPOSE 8000
+
+# 运行应用
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  ddddocr-api:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    environment:
+      - DEBUG=1
+    restart: always
