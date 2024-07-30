@@ -2,8 +2,8 @@ import uvicorn
 from fastapi import FastAPI, File, UploadFile, HTTPException, Form
 from typing import Optional, Union
 import base64
-from app.models import OCRRequest, SlideMatchRequest, DetectionRequest, APIResponse
-from app.services import ocr_service
+from models import OCRRequest, SlideMatchRequest, DetectionRequest, APIResponse
+from services import ocr_service
 
 app = FastAPI()
 
