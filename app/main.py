@@ -38,7 +38,7 @@ async def ocr_endpoint(
         png_fix: bool = Form(False)
 ):
     try:
-        if file.size == 0 and image is None:
+        if file and file.file._file is None and image is None:
             return APIResponse(code=400, message="Either file or image must be provided")
 
         image_bytes = await decode_image(file or image)
@@ -74,7 +74,7 @@ async def detection_endpoint(
         image: Optional[str] = Form(None)
 ):
     try:
-        if file.size == 0 and image is None:
+        if file and file.file._file is None and image is None:
             return APIResponse(code=400, message="Either file or image must be provided")
 
         image_bytes = await decode_image(file or image)
