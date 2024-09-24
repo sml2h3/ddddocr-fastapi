@@ -9,11 +9,9 @@ app = FastAPI()
 
 from starlette.datastructures import UploadFile as StarletteUploadFile
 
-
 async def decode_image(image: Union[UploadFile, StarletteUploadFile, str, None]) -> bytes:
     if image is None:
         raise HTTPException(status_code=400, detail="No image provided")
-
     if isinstance(image, (UploadFile, StarletteUploadFile)):
         return await image.read()
     elif isinstance(image, str):
@@ -38,9 +36,8 @@ async def ocr_endpoint(
         png_fix: bool = Form(False)
 ):
     try:
-        if file.size == 0 and image is None:
+        if file is None and image is None:
             return APIResponse(code=400, message="Either file or image must be provided")
-
         image_bytes = await decode_image(file or image)
         result = ocr_service.ocr_classification(image_bytes, probability, charsets, png_fix)
         return APIResponse(code=200, message="Success", data=result)
@@ -57,7 +54,7 @@ async def slide_match_endpoint(
         simple_target: bool = Form(False)
 ):
     try:
-        if (background is None and target is None) or (background_file.size == 0 and target_file.size == 0):
+        if (target_file is None and target is None) or (background_file is None and background is None):
             return APIResponse(code=400, message="Both target and background must be provided")
 
         target_bytes = await decode_image(target_file or target)
@@ -74,7 +71,7 @@ async def detection_endpoint(
         image: Optional[str] = Form(None)
 ):
     try:
-        if file.size == 0 and image is None:
+        if file is None and image is None:
             return APIResponse(code=400, message="Either file or image must be provided")
 
         image_bytes = await decode_image(file or image)
