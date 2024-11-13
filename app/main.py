@@ -2,8 +2,8 @@ import uvicorn
 from fastapi import FastAPI, File, UploadFile, HTTPException, Form
 from typing import Optional, Union
 import base64
-from .models import OCRRequest, SlideMatchRequest, DetectionRequest, APIResponse
-from .services import ocr_service
+from app.models import OCRRequest, SlideMatchRequest, DetectionRequest, APIResponse
+from app.services import ocr_service
 
 app = FastAPI()
 
@@ -38,7 +38,7 @@ async def ocr_endpoint(
         png_fix: bool = Form(False)
 ):
     try:
-        if file.size == 0 and image is None:
+        if file is None and image is None:
             return APIResponse(code=400, message="Either file or image must be provided")
 
         image_bytes = await decode_image(file or image)
@@ -74,7 +74,7 @@ async def detection_endpoint(
         image: Optional[str] = Form(None)
 ):
     try:
-        if file.size == 0 and image is None:
+        if file is None and image is None:
             return APIResponse(code=400, message="Either file or image must be provided")
 
         image_bytes = await decode_image(file or image)
